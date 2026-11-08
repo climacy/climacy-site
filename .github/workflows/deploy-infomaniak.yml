@@ -1,0 +1,46 @@
+name: Déployer sur Infomaniak
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infomaniak-corporate
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Installer le client FTP sécurisé
+        run: sudo apt-get update && sudo apt-get install --yes lftp
+      - name: Déployer dans le dossier du nouveau site
+        env:
+          FTP_HOST: ${{ secrets.INFOMANIAK_HOST }}
+          FTP_USERNAME: ${{ secrets.INFOMANIAK_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.INFOMANIAK_PASSWORD }}
+        shell: bash
+        run: |
+          test -n "$FTP_HOST" && test -n "$FTP_USERNAME" && test -n "$FTP_PASSWORD"
+          lftp <<LFTP_COMMANDS
+          set cmd:fail-exit true
+          set net:max-retries 2
+          set net:timeout 30
+          set ftp:ssl-auth TLS
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate true
+          open "ftp://${FTP_HOST}:21"
+          user "${FTP_USERNAME}" "${FTP_PASSWORD}"
+          mirror --reverse --verbose --parallel=4 dist/ climacy-corporate-new/
+          bye
+          LFTP_COMMANDS
