@@ -41,6 +41,6 @@ jobs:
           set ssl:verify-certificate true
           open "ftp://${FTP_HOST}:21"
           user "${FTP_USERNAME}" "${FTP_PASSWORD}"
-          mirror --reverse --verbose --parallel=4 dist/ climacy-corporate-new/
+          mirror --reverse --verbose --parallel=4 dist/ ./
           bye
           LFTP_COMMANDS
