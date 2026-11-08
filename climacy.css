@@ -1310,6 +1310,11 @@
   text-wrap: balance;
 }
 .cin .fcp-hero-copy .site-hero-title { max-width: 19ch; }
+.cin .hero .site-hero-title .l2 { display: block; }
+@media (min-width: 1100px) {
+  .cin .hero .site-hero-title { max-width: 32ch; }
+  .cin .hero .site-hero-title .l2 { white-space: nowrap; }
+}
 .cin .fcp-hero-copy .site-hero-title span { display: block; margin-top: 14px; font-size: .78em; line-height: 1.12; letter-spacing: -.025em; }
 .cin .fcp-hero-copy p { max-width: 52ch; margin: 27px 0 32px; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.55; }
 .cin .fcp-hero-visual > .ph { inset: 0 0 35px; border-radius: 4px 70px 4px 4px; }
