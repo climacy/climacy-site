@@ -54,8 +54,14 @@ function smtp_send(string $to, string $subject, string $body, ?string $replyTo =
     $username = (string) getenv('CLIMACY_MAIL_USER');
     $password = (string) getenv('CLIMACY_MAIL_PASSWORD');
     $from = (string) getenv('CLIMACY_MAIL_FROM');
-    if ($host === '' || $port < 1 || $username === '' || $password === '' || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
-        throw new RuntimeException('Configuration SMTP incomplète.');
+    $missing = [];
+    if ($host === '') $missing[] = 'CLIMACY_MAIL_HOST';
+    if ($port < 1) $missing[] = 'CLIMACY_MAIL_PORT';
+    if ($username === '') $missing[] = 'CLIMACY_MAIL_USER';
+    if ($password === '') $missing[] = 'CLIMACY_MAIL_PASSWORD';
+    if (!filter_var($from, FILTER_VALIDATE_EMAIL)) $missing[] = 'CLIMACY_MAIL_FROM';
+    if ($missing) {
+        throw new RuntimeException('Configuration SMTP incomplète : ' . implode(', ', $missing) . '.');
     }
 
     $errorNumber = 0;
