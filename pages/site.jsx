@@ -548,7 +548,7 @@ function PageFinancement() {
             <div className="eyebrow">Coproduction solaire · plus de 30 kWc</div>
             <h1 className="disp site-hero-title">Rénovez votre toiture.<span>Climacy finance vos tuiles solaires, pose comprise.</span></h1>
             <p>Vous prévoyez de refaire votre toiture ? Climacy peut financer votre nouvelle couverture solaire, tuiles et pose comprises. Vous économisez sur votre rénovation et profitez de l’électricité produite sur votre toit à un tarif préférentiel. Vous restez propriétaire de votre toiture, tandis que Climacy exploite et suit la centrale pendant 30 ans.</p>
-            <a className="btn btn-lg btnlink" href={STUDY_URL} {...EXT}>Vérifier l’éligibilité de mon projet<Arrow /></a>
+            <a className="btn btn-lg btnlink" href={STUDY_URL} {...EXT}>Tester mon éligibilité<Arrow /></a>
           </div>
           <div className="fcp-hero-visual fcp-reveal-item">
             <Img tone="dark" src="assets/photos/renens-stade.png" alt="Grande toiture solaire Climacy intégrée à un bâtiment collectif" />
