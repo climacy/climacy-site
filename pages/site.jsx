@@ -918,7 +918,7 @@ function PageProfessionnels() {
       <div className="eyebrow">Architectes · couvreurs · professionnels du bâtiment</div>
       <h1 className="disp site-hero-title">Une toiture solaire pensée pour votre projet.</h1>
       <p>En rénovation comme en construction neuve, les tuiles Climacy deviennent la couverture du bâtiment. Nous vous accompagnons pour concevoir leur implantation et les intégrer à votre projet.</p>
-      <a className="btn btn-lg btnlink" href="mailto:info@climacy.ch?subject=Projet%20professionnel">Parler de mon projet <Arrow /></a>
+      <a className="btn btn-lg btnlink" href="/contact/?type=professionnel#formulaire">Parler de mon projet <Arrow /></a>
     </section>
     <section className="pro-formats">
       <div className="eyebrow">Trois formats complémentaires</div>
@@ -933,7 +933,7 @@ function PageProfessionnels() {
     <section className="pro-support">
       <div className="eyebrow">À vos côtés</div><h2 className="disp">Du calepinage aux détails de toiture.</h2>
       <div className="pro-support-grid"><article><h3 className="disp">Un calepinage sur mesure</h3><p>Climacy établit le plan d’implantation des tuiles pour chaque toiture, en tenant compte de sa géométrie, de l’esthétique et de la production.</p></article><article><h3 className="disp">Des finitions soignées</h3><p>Rives, raccords de ferblanterie, faîtages et égouts : les détails sont étudiés pour assurer la cohérence de la toiture.</p></article></div>
-      <a className="btn btn-lg btnlink" href="mailto:info@climacy.ch?subject=Projet%20professionnel">Discuter de mon projet <Arrow /></a>
+      <a className="btn btn-lg btnlink" href="/contact/?type=professionnel#formulaire">Discuter de mon projet <Arrow /></a>
     </section>
   </div>;
 }
@@ -1188,23 +1188,103 @@ function PageAPropos() {
 }
 
 /* ───────────── CONTACT ───────────── */
+function ContactForm() {
+  const initialType = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('type') === 'professionnel'
+    ? 'Projet professionnel'
+    : 'Projet de toiture';
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+  const startedAt = useRef(Date.now());
+
+  async function submitContact(event) {
+    event.preventDefault();
+    setStatus('sending');
+    setMessage('');
+    const form = event.currentTarget;
+    const payload = new FormData(form);
+    payload.set('started_at', String(startedAt.current));
+
+    try {
+      const response = await fetch('/contact-send.php', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: payload,
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.message || 'Envoi impossible.');
+      form.reset();
+      setStatus('success');
+      setMessage('Merci. Votre message a bien été envoyé à Climacy. Un accusé de réception vient de vous être adressé.');
+      startedAt.current = Date.now();
+    } catch (error) {
+      setStatus('error');
+      setMessage(error.message || 'Une erreur est survenue. Vous pouvez aussi nous appeler au +41 21 510 31 51.');
+    }
+  }
+
+  return (
+    <form className="contact-form" onSubmit={submitContact}>
+      <div className="contact-honeypot" aria-hidden="true">
+        <label>Site web<input name="website" tabIndex="-1" autoComplete="off" /></label>
+      </div>
+      <div className="contact-fields">
+        <label>Nom et prénom<span>*</span><input name="name" autoComplete="name" required maxLength="120" /></label>
+        <label>Entreprise<input name="company" autoComplete="organization" maxLength="160" /></label>
+        <label>Adresse e-mail<span>*</span><input type="email" name="email" autoComplete="email" required maxLength="190" /></label>
+        <label>Téléphone<input type="tel" name="phone" autoComplete="tel" maxLength="60" /></label>
+        <label>Type de demande<span>*</span>
+          <select name="project_type" defaultValue={initialType} required>
+            <option>Projet de toiture</option>
+            <option>Projet professionnel</option>
+            <option>Coproduction solaire</option>
+            <option>Question technique</option>
+            <option>Autre demande</option>
+          </select>
+        </label>
+        <label>Localisation du projet<input name="location" autoComplete="address-level2" maxLength="160" placeholder="Commune, canton" /></label>
+        <label className="contact-message">Votre message<span>*</span><textarea name="message" required minLength="10" maxLength="5000" rows="7" /></label>
+      </div>
+      <label className="contact-consent">
+        <input type="checkbox" name="consent" value="yes" required />
+        <span>J’accepte que Climacy utilise ces informations pour répondre à ma demande.<b>*</b></span>
+      </label>
+      <div className="contact-submit-row">
+        <button className="btn btn-lg btnlink" type="submit" disabled={status === 'sending'}>
+          {status === 'sending' ? 'Envoi en cours…' : 'Envoyer mon message'}<Arrow />
+        </button>
+        <p>Les champs marqués d’un * sont obligatoires.</p>
+      </div>
+      {message && <div className={`contact-status is-${status}`} role="status" aria-live="polite">{message}</div>}
+    </form>
+  );
+}
+
 function PageContact() {
   const C = CLIMACY;
   return (
-    <section className="endcta" style={{ height: 820 }}>
-      <Img tone="dark" className="bg" src="assets/photos/villa_aerial.jpg" alt="Maison contemporaine avec toiture solaire Climacy" />
-      <div className="inner">
-        <div className="eyebrow">{C.cta.eyebrow}</div>
-        <h2 className="disp">{C.cta.title[0]} <span className="l2">{C.cta.title[1]}</span></h2>
-        <p>{C.cta.body}</p>
-        <a className="btn btn-lg btnlink" href={STUDY_URL} {...EXT}>{C.cta.button}<Arrow /></a>
-        <div className="contactline">
-          <a href={'tel:' + C.contact.phone.replace(/\s/g, '')}>{C.contact.phone}</a>
-          <a href={'mailto:' + C.contact.email}>{C.contact.email}</a>
-          <span>{C.contact.addr[0]}, {C.contact.addr[1]}</span>
+    <div className="contact-page">
+      <section className="contact-hero first">
+        <div>
+          <div className="eyebrow">Contact</div>
+          <h1 className="disp site-hero-title">Parlons de <span>votre projet.</span></h1>
+          <p>Décrivez-nous votre projet de toiture ou votre demande professionnelle. Notre équipe vous répond dans les meilleurs délais.</p>
+          <div className="contact-direct">
+            <a href={'tel:' + C.contact.phone.replace(/\s/g, '')}>{C.contact.phone}</a>
+            <a href={'mailto:' + C.contact.email}>{C.contact.email}</a>
+            <span>{C.contact.addr[0]}<br />{C.contact.addr[1]}</span>
+          </div>
         </div>
-      </div>
-    </section>
+        <Img tone="dark" className="contact-hero-image" src="assets/photos/villa_aerial.jpg" alt="Maison contemporaine avec toiture solaire Climacy" />
+      </section>
+      <section className="contact-form-section" id="formulaire">
+        <div className="contact-form-heading">
+          <div className="eyebrow">Votre demande</div>
+          <h2 className="disp">Écrivez-nous directement.</h2>
+          <p>Votre message sera envoyé à <strong>info@climacy.ch</strong>.</p>
+        </div>
+        <ContactForm />
+      </section>
+    </div>
   );
 }
 
