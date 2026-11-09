@@ -176,9 +176,6 @@ try {
     smtp_send($recipient, $subject, $body, $email);
 } catch (Throwable $error) {
     error_log('Climacy contact SMTP: ' . $error->getMessage());
-    if (hash_equals('smtp-check-20261109', (string) ($_SERVER['HTTP_X_CLIMACY_DIAGNOSTIC'] ?? ''))) {
-        respond(500, false, 'Diagnostic SMTP : ' . $error->getMessage());
-    }
     respond(500, false, 'Le message n’a pas pu être envoyé. Veuillez nous appeler au +41 21 510 31 51.');
 }
 
