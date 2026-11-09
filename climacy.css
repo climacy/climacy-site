@@ -1608,4 +1608,21 @@
   .cin .ab-hero .ab-facts .stat,
   .cin .ab-hero .ab-facts .stat:nth-child(2n) { padding: 26px 22px !important; }
   .cin .ab-hero .ab-facts .stat .d { font-size: 18px; line-height: 1.45; }
+
+  /* Site-wide mobile readability audit. Keep metadata and short uppercase
+     labels compact, but never render reading copy below 18px. */
+  .cin p,
+  .cin li,
+  .cin dt,
+  .cin dd,
+  .cin q,
+  .cin .stat .d,
+  .cin .fcp-zero span { font-size: 18px !important; line-height: 1.55 !important; }
+
+  /* The before/after comparison is the sole compact-text exception. Its two
+     headings and descriptions must fit together above the imagery. */
+  .cin .comparison-captions { height: 152px !important; }
+  .cin .comparison-caption { justify-content: flex-start; padding: 18px 10px !important; }
+  .cin .comparison-caption h3 { min-height: 34px; font-size: 13px !important; line-height: 1.28; letter-spacing: .055em; }
+  .cin .comparison-caption p { margin-top: 8px; font-size: 14px !important; line-height: 1.35 !important; }
 }

@@ -928,7 +928,7 @@ function PageProfessionnels() {
         <div className="pro-format-visual"><img src={format.image} alt={format.description + ' Climacy'} /></div>
         <h3 className="disp">{format.name}</h3><p>{format.description}</p><dl className="pro-format-data"><div><dt>Puissance</dt><dd>{format.power}</dd></div><div><dt>Dimensions</dt><dd>{format.dimensions}</dd></div><div><dt>Poids</dt><dd>{format.weight}</dd></div></dl>
       </article>)}</div>
-      <div className="pro-specs"><h3 className="disp">L’essentiel en commun</h3><ul><li>Cellules TOPCon bifaciales</li><li>Double verre trempé</li><li>Encapsulant TPO haut de gamme</li><li>Grêle : classe HW4</li><li>Garantie produit : 10 ans</li><li>Plus de 85 % de puissance garantie après 30 ans</li></ul><p>Puissances nominales en conditions de test standard. Données indicatives sujettes à modification.</p><a className="btn btnlink" href="/assets/modules/fiche-technique-climacy.pdf" target="_blank" rel="noopener noreferrer">Voir la fiche technique complète <Arrow /></a></div>
+      <div className="pro-specs"><h3 className="disp">L’essentiel en commun</h3><ul><li>Cellules TOPCon bifaciales</li><li>Double verre trempé</li><li>Encapsulant TPO haut de gamme</li><li>Grêle : classe HW4</li><li>Garantie produit : 10 ans</li><li>Plus de 85 % de puissance garantie après 30 ans</li></ul><p>Puissances nominales en conditions de test standard. Données indicatives sujettes à modification.</p><a className="btn btnlink" href="/assets/modules/fiche-technique-climacy.pdf" target="_blank" rel="noopener noreferrer">Fiche technique <Arrow /></a></div>
     </section>
     <section className="pro-support">
       <div className="eyebrow">À vos côtés</div><h2 className="disp">Du calepinage aux détails de toiture.</h2>
