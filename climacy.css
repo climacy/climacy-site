@@ -1406,54 +1406,62 @@
 
 /* Contact — native form delivered by the Infomaniak PHP endpoint. */
 .cin .contact-page { background: #f2f1ea; color: #171814; }
-.cin .contact-hero { display: grid; grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr); gap: clamp(55px, 8vw, 120px); align-items: center; padding-top: clamp(72px, 7vw, 110px); padding-bottom: clamp(72px, 7vw, 110px); }
-.cin .contact-hero h1 { max-width: 12ch; margin-top: 22px; }
-.cin .contact-hero h1 span { color: #688a00; }
-.cin .contact-hero > div > p { max-width: 48ch; margin-top: 28px; color: #53564d; font-size: 18px; line-height: 1.55; }
-.cin .contact-hero-image { height: clamp(390px, 37vw, 540px); border-radius: 3px 70px 3px 3px; }
-.cin .contact-direct { display: flex; flex-wrap: wrap; gap: 16px 28px; margin-top: 36px; color: #3f433b; font-size: 16px; line-height: 1.55; }
-.cin .contact-direct a { color: #486700; text-decoration: underline; text-underline-offset: 4px; }
-.cin .contact-form-section { display: grid; grid-template-columns: minmax(280px, .7fr) minmax(0, 1.3fr); gap: clamp(55px, 8vw, 120px); border-top: 1px solid rgba(23,24,20,.15); background: #e6eadc; }
+.cin .contact-hero { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: 650px; overflow: hidden; padding-top: clamp(105px, 10vw, 150px); padding-bottom: clamp(72px, 7vw, 105px); background: #111 url('/assets/photos/villa_aerial.jpg') 62% 52% / cover no-repeat; color: #fff; }
+.cin .contact-hero::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, rgba(8,10,7,.94) 0%, rgba(8,10,7,.76) 43%, rgba(8,10,7,.16) 78%), linear-gradient(0deg, rgba(8,10,7,.72), transparent 52%); }
+.cin .contact-hero > div { position: relative; z-index: 2; width: min(660px, 55%); }
+.cin .contact-hero .eyebrow { color: var(--warm); }
+.cin .contact-hero h1 { max-width: 12ch; margin-top: 22px; font-size: clamp(54px, 6vw, 82px); line-height: .96; }
+.cin .contact-hero h1 span { display: block; color: var(--warm); }
+.cin .contact-hero > div > p { max-width: 45ch; margin-top: 28px; color: rgba(241,239,232,.82); font-size: 18px; line-height: 1.55; }
+.cin .contact-direct { display: grid; grid-template-columns: auto auto 1fr; gap: 18px 28px; align-items: start; margin-top: 42px; padding-top: 25px; border-top: 1px solid rgba(217,255,0,.38); color: rgba(241,239,232,.78); font-size: 15px; line-height: 1.5; }
+.cin .contact-direct a { color: #fff; text-decoration: none; transition: color .2s; }
+.cin .contact-direct a:hover { color: var(--warm); }
+.cin .contact-form-section { display: grid; grid-template-columns: minmax(280px, .65fr) minmax(0, 1.35fr); gap: clamp(55px, 8vw, 120px); align-items: start; border-top: 1px solid rgba(23,24,20,.15); background: #e9ecdf; }
 .cin .contact-form-heading { position: sticky; top: 95px; align-self: start; }
-.cin .contact-form-heading h2 { max-width: 10ch; margin-top: 22px; font-size: clamp(38px, 4vw, 56px); line-height: 1.02; }
+.cin .contact-form-heading .eyebrow { color: #5b7600; }
+.cin .contact-form-heading h2 { max-width: 10ch; margin-top: 22px; font-size: clamp(42px, 4vw, 58px); line-height: 1; letter-spacing: -.03em; }
 .cin .contact-form-heading p { margin-top: 24px; color: #53564d; font-size: 17px; }
 .cin .contact-form-heading strong { color: #486700; font-weight: 400; }
-.cin .contact-form { position: relative; }
+.cin .contact-form { position: relative; padding: clamp(28px, 3.5vw, 48px); border: 1px solid rgba(23,24,20,.12); border-radius: 4px 52px 4px 4px; background: #f8f7f2; box-shadow: 0 24px 70px rgba(38,45,27,.10); }
 .cin .contact-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 22px; }
-.cin .contact-form label { display: grid; gap: 9px; color: #34372f; font-size: 14px; line-height: 1.35; }
-.cin .contact-form label > span { color: #5b7600; }
+.cin .contact-form label { display: block; color: #34372f; font-size: 14px; line-height: 1.35; }
+.cin .contact-form label > span { display: inline; margin-left: 3px; color: #5b7600; }
 .cin .contact-form input,
 .cin .contact-form select,
-.cin .contact-form textarea { width: 100%; border: 1px solid rgba(23,24,20,.28); border-radius: 3px; background: rgba(255,255,255,.58); color: #171814; font: 18px/1.4 var(--sans); outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
+.cin .contact-form textarea { width: 100%; border: 1px solid rgba(23,24,20,.22); border-radius: 3px; background: #fff; color: #171814; font: 17px/1.4 var(--sans); outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
 .cin .contact-form input,
-.cin .contact-form select { min-height: 54px; padding: 12px 14px; }
-.cin .contact-form textarea { min-height: 170px; padding: 14px; resize: vertical; }
+.cin .contact-form select { min-height: 54px; margin-top: 9px; padding: 12px 14px; }
+.cin .contact-form textarea { min-height: 170px; margin-top: 9px; padding: 14px; resize: vertical; }
 .cin .contact-form input:focus,
 .cin .contact-form select:focus,
 .cin .contact-form textarea:focus { border-color: #688a00; background: #fff; box-shadow: 0 0 0 3px rgba(104,138,0,.13); }
 .cin .contact-message { grid-column: 1 / -1; }
-.cin .contact-consent { grid-template-columns: 22px 1fr !important; align-items: start; margin-top: 24px; }
+.cin .contact-consent { display: grid !important; grid-template-columns: 22px minmax(0, 1fr) !important; gap: 12px; align-items: start; margin-top: 24px; }
 .cin .contact-consent input { width: 20px; min-height: 20px; height: 20px; margin-top: 1px; accent-color: #688a00; }
-.cin .contact-consent span { color: #53564d !important; font-size: 14px; }
-.cin .contact-consent b { color: #5b7600; font-weight: 400; }
+.cin .contact-consent span { display: block !important; margin-left: 0 !important; color: #53564d !important; font-size: 14px; line-height: 1.45; }
+.cin .contact-consent b { margin-left: 4px; color: #5b7600; font-weight: 400; }
 .cin .contact-submit-row { display: flex; align-items: center; gap: 22px; margin-top: 28px; }
-.cin .contact-submit-row button { border: 0; cursor: pointer; }
+.cin .contact-submit-row button { min-width: 250px; border: 0; cursor: pointer; }
 .cin .contact-submit-row button:disabled { cursor: wait; opacity: .65; }
 .cin .contact-submit-row p { color: #686b63; font-size: 13px; }
 .cin .contact-status { margin-top: 22px; padding: 16px 18px; border-left: 3px solid #688a00; background: rgba(255,255,255,.62); color: #34372f; font-size: 16px; line-height: 1.45; }
+.cin .contact-status.is-preview { border-color: #789b00; background: #eef3df; color: #40502c; }
 .cin .contact-status.is-error { border-color: #a5362d; color: #7a241d; }
 .cin .contact-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
 @media (max-width: 899px) {
-  .cin .contact-hero,
-  .cin .contact-form-section { grid-template-columns: minmax(0, 1fr); gap: 38px; padding: 50px 20px; }
-  .cin .contact-hero h1 { font-size: 42px; }
+  .cin .contact-hero { min-height: 680px; padding: 82px 20px 48px; }
+  .cin .contact-hero::after { background: linear-gradient(0deg, rgba(8,10,7,.95) 0%, rgba(8,10,7,.72) 66%, rgba(8,10,7,.24) 100%); }
+  .cin .contact-hero > div { width: 100%; }
+  .cin .contact-hero h1 { font-size: 48px; }
   .cin .contact-hero > div > p { font-size: 18px; }
-  .cin .contact-hero-image { height: 330px; border-radius: 3px 42px 3px 3px; }
-  .cin .contact-direct { display: grid; gap: 10px; font-size: 18px; }
+  .cin .contact-hero { background-position: 60% 50%; }
+  .cin .contact-direct { grid-template-columns: 1fr; gap: 9px; margin-top: 32px; padding-top: 20px; font-size: 17px; }
+  .cin .contact-form-section { grid-template-columns: minmax(0, 1fr); gap: 34px; padding: 54px 20px 64px; }
   .cin .contact-form-heading { position: static; }
   .cin .contact-form-heading h2 { font-size: 36px; }
   .cin .contact-form-heading p { font-size: 18px; }
+  .cin .contact-form { padding: 24px 18px 28px; border-radius: 3px 34px 3px 3px; }
   .cin .contact-fields { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .cin .contact-message { grid-column: auto; }
   .cin .contact-form label { font-size: 16px; }

@@ -1204,12 +1204,20 @@ function ContactForm() {
     const payload = new FormData(form);
     payload.set('started_at', String(startedAt.current));
 
+    if (['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+      setStatus('preview');
+      setMessage('Aperçu local : le formulaire est valide, mais aucun e-mail n’est envoyé depuis le serveur de développement. L’envoi réel sera actif sur climacy.ch après publication.');
+      return;
+    }
+
     try {
       const response = await fetch('/contact-send.php', {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: payload,
       });
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) throw new Error('Le service d’envoi est momentanément indisponible. Veuillez réessayer ou nous appeler au +41 21 510 31 51.');
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.message || 'Envoi impossible.');
       form.reset();
@@ -1274,7 +1282,6 @@ function PageContact() {
             <span>{C.contact.addr[0]}<br />{C.contact.addr[1]}</span>
           </div>
         </div>
-        <Img tone="dark" className="contact-hero-image" src="assets/photos/villa_aerial.jpg" alt="Maison contemporaine avec toiture solaire Climacy" />
       </section>
       <section className="contact-form-section" id="formulaire">
         <div className="contact-form-heading">
