@@ -52,7 +52,7 @@ function smtp_send(string $to, string $subject, string $body, ?string $replyTo =
     $host = (string) getenv('CLIMACY_MAIL_HOST');
     $port = (int) getenv('CLIMACY_MAIL_PORT');
     $username = (string) (getenv('CLIMACY_MAIL_USERNAME') ?: getenv('CLIMACY_MAIL_USER'));
-    $password = (string) getenv('CLIMACY_MAIL_PASSWORD');
+    $password = preg_replace('/\s+/u', '', (string) getenv('CLIMACY_MAIL_PASSWORD')) ?? '';
     $from = (string) getenv('CLIMACY_MAIL_FROM');
     $missing = [];
     if ($host === '') $missing[] = 'CLIMACY_MAIL_HOST';
