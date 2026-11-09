@@ -1588,4 +1588,24 @@
   /* Mobile gets the same deliberate reveal as desktop, with a slightly
      stronger vertical movement so scrolling through the narrative feels alive. */
   .cin .finance-page.fcp-reveal-ready .fcp-reveal-item { transform: translate3d(0, 42px, 0) scale(.992); }
+
+  /* Final mobile type scale: body copy stays consistent and readable across
+     the homepage and both sticky story carousels. */
+  .cin .home-page p,
+  .cin .home-page .site-hero-copy,
+  .cin .home-page .home-realisations-intro,
+  .cin .tuile-split-carousel .ts-copy-slide p,
+  .cin .route-apropos .ab-intro,
+  .cin .route-apropos .abv-bio p,
+  .cin .route-apropos .abv-quote q { font-size: 18px !important; line-height: 1.55 !important; }
+
+  /* Give energetic touch gestures more travel per item, reducing accidental
+     two-item jumps while preserving native iOS scrolling. */
+  .cin .tuile-split-carousel { height: 1200svh !important; }
+  .cin .abv-carousel { height: 750svh !important; }
+
+  /* Override later desktop fact-card declarations on phones. */
+  .cin .ab-hero .ab-facts .stat,
+  .cin .ab-hero .ab-facts .stat:nth-child(2n) { padding: 26px 22px !important; }
+  .cin .ab-hero .ab-facts .stat .d { font-size: 18px; line-height: 1.45; }
 }
