@@ -1385,6 +1385,21 @@
   .cin .tuile-first.page-intro-section { padding-bottom: 30px !important; }
 }
 .cin .home-realisations-intro { margin-top: 22px; max-width: 65ch; color: rgba(241,239,232,.75); font-size: 17px; line-height: 1.55; }
+
+/* Homepage desktop body copy uses one shared reading size. Compact interface
+   copy such as comparison captions and project labels remains independent. */
+@media (min-width: 900px) {
+  .cin .home-page .site-hero-copy,
+  .cin .home-page .home-product-intro,
+  .cin .home-page .integration-intro,
+  .cin .home-page .interest-home-copy p,
+  .cin .home-page .home-realisations-intro,
+  .cin .home-page .home-process .process .s p {
+    font-size: 18px;
+    line-height: 1.55;
+  }
+}
+.cin .home-product-intro { margin-top: 26px; color: rgba(241,239,232,.84); }
 .cin .home-page.home-reveal-ready .home-reveal { opacity: 0; transform: translateY(26px); transition: opacity .75s ease var(--home-delay, 0ms), transform .9s cubic-bezier(.2,.75,.25,1) var(--home-delay, 0ms); }
 .cin .home-page.home-reveal-ready .home-reveal { transform: translateY(45px) scale(.985); transition-duration: .85s, 1.05s; }
 .cin .home-page.home-reveal-ready .home-reveal.is-visible { opacity: 1; transform: none; }

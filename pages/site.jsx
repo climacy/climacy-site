@@ -237,7 +237,7 @@ function PageAccueil({ heroMedia }) {
           <div>
             <div className="eyebrow">{C.product.eyebrow}</div>
             <h2 className="disp product-title">{C.product.title[0]} <span>{C.product.title[1]}</span></h2>
-            <p style={{ fontSize: 20, color: 'rgba(241,239,232,0.84)', marginTop: 26, lineHeight: 1.55 }}>{C.product.body}</p>
+            <p className="home-product-intro">{C.product.body}</p>
             <div className="home-product-link"><LinkBtn to="tuile">Découvrir la tuile solaire</LinkBtn></div>
           </div>
         </div>
