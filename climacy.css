@@ -1569,4 +1569,21 @@
   .cin .finance-page .fcp-hero-visual { min-width: 0; min-height: 370px; width: 100%; }
   .cin .finance-page .fcp-hero-visual > .ph { inset: 0 0 34px; border-radius: 3px 44px 3px 3px; }
   .cin .finance-page .fcp-zero { right: 10px; bottom: 0; width: min(318px, calc(100% - 20px)); padding: 16px 17px; gap: 12px; }
+
+  /* Keep every finance section strictly single-column on narrow viewports.
+     These selectors come after the editorial desktop sizing rules. */
+  .cin .finance-page .fcp-section-head,
+  .cin .finance-page .fcp-flow-title,
+  .cin .finance-page .fcp-choice-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .cin .finance-page .fcp-section-head .eyebrow { grid-column: auto; margin-bottom: 4px; }
+  .cin .finance-page .fcp-section-head h2,
+  .cin .finance-page .fcp-flow-title h2,
+  .cin .finance-page .fcp-steps-heading h2,
+  .cin .finance-page .fcp-choice-head h2 { max-width: 13ch; margin: 0; font-size: clamp(31px, 9.1vw, 38px); line-height: 1.06; }
+  .cin .finance-page .fcp-section-head > p,
+  .cin .finance-page .fcp-choice-head > p { max-width: 34ch; padding: 0; font-size: 16px; line-height: 1.52; }
+
+  /* Mobile gets the same deliberate reveal as desktop, with a slightly
+     stronger vertical movement so scrolling through the narrative feels alive. */
+  .cin .finance-page.fcp-reveal-ready .fcp-reveal-item { transform: translate3d(0, 42px, 0) scale(.992); }
 }
