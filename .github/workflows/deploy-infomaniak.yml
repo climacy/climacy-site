@@ -28,8 +28,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes lftp
       - name: Déployer dans le dossier du nouveau site
         env:
-          FTP_HOST: ${{ secrets.INFOMANIAK_HOST }}
-          FTP_USERNAME: ${{ secrets.INFOMANIAK_USERNAME }}
+          FTP_HOST: uh8o94.ftp.infomaniak.com
+          FTP_USERNAME: uh8o94_github-site-corp
           FTP_PASSWORD: ${{ secrets.INFOMANIAK_PASSWORD }}
         shell: bash
         run: |
