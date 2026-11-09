@@ -1619,6 +1619,11 @@
   .cin .stat .d,
   .cin .fcp-zero span { font-size: 18px !important; line-height: 1.55 !important; }
 
+  /* Compact financing callout: keep its hierarchy aligned with the hero instead
+     of inheriting the roomy global mobile paragraph rhythm. */
+  .cin .finance-page .fcp-zero span { font-size: 16px !important; line-height: 1.35 !important; }
+  .cin .finance-page .fcp-zero strong { margin-bottom: 7px; font-size: 13px !important; line-height: 1.25 !important; letter-spacing: .055em; }
+
   /* The before/after comparison is the sole compact-text exception. Its two
      headings and descriptions must fit together above the imagery. */
   .cin .comparison-captions { height: 152px !important; }
