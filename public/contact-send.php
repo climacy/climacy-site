@@ -17,6 +17,94 @@ function clean_line(string $value, int $limit): string
     return mb_substr($value, 0, $limit);
 }
 
+function smtp_read($socket): array
+{
+    $response = '';
+    $code = 0;
+    while (($line = fgets($socket, 2048)) !== false) {
+        $response .= $line;
+        if (preg_match('/^(\d{3})([ -])/', $line, $matches)) {
+            $code = (int) $matches[1];
+            if ($matches[2] === ' ') break;
+        }
+    }
+    return [$code, trim($response)];
+}
+
+function smtp_expect($socket, array $accepted, string $step): void
+{
+    [$code, $response] = smtp_read($socket);
+    if (!in_array($code, $accepted, true)) {
+        throw new RuntimeException("SMTP {$step} refusé ({$code}): {$response}");
+    }
+}
+
+function smtp_command($socket, string $command, array $accepted, string $step): void
+{
+    if (fwrite($socket, $command . "\r\n") === false) {
+        throw new RuntimeException("Écriture SMTP impossible à l’étape {$step}.");
+    }
+    smtp_expect($socket, $accepted, $step);
+}
+
+function smtp_send(string $to, string $subject, string $body, ?string $replyTo = null): void
+{
+    $host = (string) getenv('CLIMACY_MAIL_HOST');
+    $port = (int) getenv('CLIMACY_MAIL_PORT');
+    $username = (string) getenv('CLIMACY_MAIL_USER');
+    $password = (string) getenv('CLIMACY_MAIL_PASSWORD');
+    $from = (string) getenv('CLIMACY_MAIL_FROM');
+    if ($host === '' || $port < 1 || $username === '' || $password === '' || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
+        throw new RuntimeException('Configuration SMTP incomplète.');
+    }
+
+    $errorNumber = 0;
+    $errorMessage = '';
+    $socket = @stream_socket_client("tcp://{$host}:{$port}", $errorNumber, $errorMessage, 20, STREAM_CLIENT_CONNECT);
+    if (!is_resource($socket)) {
+        throw new RuntimeException("Connexion SMTP impossible ({$errorNumber}): {$errorMessage}");
+    }
+    stream_set_timeout($socket, 20);
+
+    try {
+        smtp_expect($socket, [220], 'connexion');
+        smtp_command($socket, 'EHLO climacy.ch', [250], 'EHLO');
+        smtp_command($socket, 'STARTTLS', [220], 'STARTTLS');
+        if (@stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT) !== true) {
+            throw new RuntimeException('Activation TLS impossible.');
+        }
+        smtp_command($socket, 'EHLO climacy.ch', [250], 'EHLO sécurisé');
+        smtp_command($socket, 'AUTH LOGIN', [334], 'authentification');
+        smtp_command($socket, base64_encode($username), [334], 'identifiant');
+        smtp_command($socket, base64_encode($password), [235], 'mot de passe');
+        smtp_command($socket, "MAIL FROM:<{$from}>", [250], 'expéditeur');
+        smtp_command($socket, "RCPT TO:<{$to}>", [250, 251], 'destinataire');
+        smtp_command($socket, 'DATA', [354], 'données');
+
+        $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+        $headers = [
+            'Date: ' . date(DATE_RFC2822),
+            'Message-ID: <' . bin2hex(random_bytes(12)) . '@climacy.ch>',
+            'From: Climacy <' . $from . '>',
+            'To: <' . $to . '>',
+            'Subject: ' . $encodedSubject,
+            'MIME-Version: 1.0',
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 8bit',
+        ];
+        if ($replyTo && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) $headers[] = 'Reply-To: <' . $replyTo . '>';
+        $normalizedBody = preg_replace("/\r\n|\r|\n/", "\r\n", $body) ?? $body;
+        $normalizedBody = preg_replace('/^\./m', '..', $normalizedBody) ?? $normalizedBody;
+        if (fwrite($socket, implode("\r\n", $headers) . "\r\n\r\n" . $normalizedBody . "\r\n.\r\n") === false) {
+            throw new RuntimeException('Transmission du message impossible.');
+        }
+        smtp_expect($socket, [250], 'remise du message');
+        smtp_command($socket, 'QUIT', [221], 'fermeture');
+    } finally {
+        fclose($socket);
+    }
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     respond(405, false, 'Méthode non autorisée.');
@@ -67,7 +155,6 @@ if (count($attempts) >= 5) {
 }
 
 $recipient = 'info@climacy.ch';
-$sender = 'info@climacy.ch';
 $subject = 'Nouveau message — ' . $projectType;
 $body = "Nouveau message depuis climacy.ch\n\n"
     . "Type de demande : {$projectType}\n"
@@ -79,18 +166,10 @@ $body = "Nouveau message depuis climacy.ch\n\n"
     . "Message :\n{$message}\n\n"
     . "Consentement au traitement de la demande : oui\n";
 
-$encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-$headers = [
-    'From: Site Climacy <' . $sender . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-];
-
-$sent = @mail($recipient, $encodedSubject, $body, implode("\r\n", $headers));
-if (!$sent) {
-    error_log('Climacy contact form: primary mail delivery failed.');
+try {
+    smtp_send($recipient, $subject, $body, $email);
+} catch (Throwable $error) {
+    error_log('Climacy contact SMTP: ' . $error->getMessage());
     respond(500, false, 'Le message n’a pas pu être envoyé. Veuillez nous appeler au +41 21 510 31 51.');
 }
 
@@ -101,13 +180,10 @@ $ackSubject = 'Votre message à Climacy';
 $ackBody = "Bonjour {$name},\n\n"
     . "Nous avons bien reçu votre message concernant « {$projectType} ». Notre équipe vous répondra dans les meilleurs délais.\n\n"
     . "Cordialement,\nClimacy SA\nChemin de la Mochettaz 7\n1030 Bussigny (VD)\n+41 21 510 31 51\ninfo@climacy.ch\n";
-$ackHeaders = [
-    'From: Climacy <' . $sender . '>',
-    'Reply-To: Climacy <' . $recipient . '>',
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-];
-@mail($email, '=?UTF-8?B?' . base64_encode($ackSubject) . '?=', $ackBody, implode("\r\n", $ackHeaders));
+try {
+    smtp_send($email, $ackSubject, $ackBody, $recipient);
+} catch (Throwable $error) {
+    error_log('Climacy contact acknowledgement SMTP: ' . $error->getMessage());
+}
 
 respond(200, true, 'Merci. Votre message a bien été envoyé à Climacy.');
