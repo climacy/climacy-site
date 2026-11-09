@@ -88,7 +88,9 @@ $headers = [
     'Content-Transfer-Encoding: 8bit',
 ];
 
-if (!mail($recipient, $encodedSubject, $body, implode("\r\n", $headers))) {
+$sent = @mail($recipient, $encodedSubject, $body, implode("\r\n", $headers));
+if (!$sent) {
+    error_log('Climacy contact form: primary mail delivery failed.');
     respond(500, false, 'Le message n’a pas pu être envoyé. Veuillez nous appeler au +41 21 510 31 51.');
 }
 

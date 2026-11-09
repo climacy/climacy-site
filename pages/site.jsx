@@ -1217,8 +1217,14 @@ function ContactForm() {
         body: payload,
       });
       const contentType = response.headers.get('content-type') || '';
+      const responseText = await response.text();
       if (!contentType.includes('application/json')) throw new Error('Le service d’envoi est momentanément indisponible. Veuillez réessayer ou nous appeler au +41 21 510 31 51.');
-      const result = await response.json();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        throw new Error('Le service d’envoi a rencontré une erreur serveur. Veuillez réessayer ou nous appeler au +41 21 510 31 51.');
+      }
       if (!response.ok || !result.ok) throw new Error(result.message || 'Envoi impossible.');
       form.reset();
       setStatus('success');
