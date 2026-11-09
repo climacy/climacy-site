@@ -1557,4 +1557,16 @@
   .cin .finance-page .fcp-hero { padding-top: 58px; padding-bottom: 62px; }
   .cin .fcp-hero-copy .site-hero-title span { margin-top: 12px; font-size: .82em; }
   .cin .fcp-zero { grid-template-columns: auto 1fr; right: 12px; width: min(330px, calc(100% - 24px)); }
+
+  /* The desktop grid is declared later in this stylesheet for the wider
+     editorial layout. Re-assert the mobile composition here so the visual
+     never creates a 400px-wide column or horizontal overflow on phones. */
+  .cin .finance-page .fcp-hero { padding: 42px 20px 52px; }
+  .cin .finance-page .fcp-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; width: 100%; }
+  .cin .finance-page .fcp-hero-copy { min-width: 0; }
+  .cin .finance-page .fcp-hero-copy .site-hero-title { max-width: 13ch; font-size: clamp(37px, 10.5vw, 48px); }
+  .cin .finance-page .fcp-hero-copy p { margin: 22px 0 28px; font-size: 16px; }
+  .cin .finance-page .fcp-hero-visual { min-width: 0; min-height: 370px; width: 100%; }
+  .cin .finance-page .fcp-hero-visual > .ph { inset: 0 0 34px; border-radius: 3px 44px 3px 3px; }
+  .cin .finance-page .fcp-zero { right: 10px; bottom: 0; width: min(318px, calc(100% - 20px)); padding: 16px 17px; gap: 12px; }
 }
