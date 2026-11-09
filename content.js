@@ -164,7 +164,7 @@ const CLIMACY = {
     eyebrow: 'Étude personnalisée · gratuite · sans engagement',
     title: ['Parlons de', 'votre projet.'],
     body: "Explorez vous-même le potentiel solaire de votre toiture et obtenez une première estimation de votre projet. Pour la coproduction, Climacy étudie ensuite l’éligibilité et les conditions de financement.",
-    button: 'Découvrir le potentiel de mon toit',
+    button: 'Estimer mon toit',
     sub: 'Réponse sous 48 h ouvrées',
   },
   about: {
