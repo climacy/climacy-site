@@ -13,6 +13,7 @@ const ROUTES = [
   { id: 'realisations', label: 'Réalisations' },
   { id: 'professionnels', label: 'Professionnels' },
   { id: 'financement', label: 'Financement' },
+  { id: 'renomize', label: 'Renomize' },
   { id: 'ressources', label: 'Ressources' },
   { id: 'apropos', label: 'À propos' },
   { id: 'contact', label: 'Contact' },
@@ -61,6 +62,7 @@ const ROUTE_PATHS = {
   architectes: '/architectes/',
   ppe: '/ppe/',
   financement: '/financement/',
+  renomize: '/renomize/',
   ressources: '/ressources/',
   apropos: '/a-propos/',
   contact: '/contact/',
@@ -1301,9 +1303,58 @@ function PageContact() {
   );
 }
 
+// Renomize : rénovation énergétique globale présentée en maquette 3D interactive.
+const RENOMIZE_MODEL = '/renomize/maquette-3d.html';
+const RENOMIZE_FIGURES = [
+  { v: '129.2 kWc', l: 'puissance photovoltaïque installée' },
+  { v: '119.3 kWc', l: 'en toiture, quatre pans entièrement solaires' },
+  { v: '9.9 kWc', l: 'en façade, sur éléments préfabriqués' },
+  { v: '20 cm', l: 'd’isolation périphérique en laine de roche' },
+];
+const RENOMIZE_STEPS = [
+  { t: 'Toiture solaire intégrée', d: 'Les quatre pans sont couverts de tuiles solaires Climacy (308 modules actifs). Les arêtiers et les rives sont complétés par des modules factices noirs : la toiture forme une surface continue.' },
+  { t: 'Façade préfabriquée active', d: 'Sur la façade est, des éléments préfabriqués en bois remplacent l’habillage traditionnel. Ils sont revêtus de plaques grises et équipés de modules Climacy gris (20 L et 5 M) de part et d’autre des fenêtres.' },
+  { t: 'Enveloppe isolée', d: 'Les autres façades reçoivent 20 cm de laine de roche sous un crépi clair continu. Les fenêtres restent à leur emplacement d’origine, avec de nouvelles tablettes métalliques grises, et les balcons sont conservés.' },
+];
+function PageRenomize() {
+  return (
+    <section className="first page-intro-section renomize">
+      <div className="seclead page-intro">
+        <div className="eyebrow">Renomize · projet de rénovation</div>
+        <h2 className="disp page-intro-title">Un immeuble rénové, vu en 3D</h2>
+        <p className="page-intro-copy">Immeuble résidentiel de quatre niveaux à La Tour-de-Peilz : enveloppe isolée, façade préfabriquée active et toiture entièrement solaire. Faites tourner la maquette, comparez l’existant et le projet, et observez l’ensoleillement selon la date et l’heure.</p>
+      </div>
+      <div className="renomize-figures">
+        {RENOMIZE_FIGURES.map((f) => (
+          <div className="renomize-figure" key={f.l}><div className="disp">{f.v}</div><div>{f.l}</div></div>
+        ))}
+      </div>
+      <div className="renomize-model">
+        <iframe src={RENOMIZE_MODEL} title="Maquette 3D interactive du projet Renomize à La Tour-de-Peilz" loading="lazy" allow="fullscreen" />
+      </div>
+      <p className="renomize-note">
+        <a href={RENOMIZE_MODEL} {...EXT}>Ouvrir la maquette en plein écran</a>
+        {' · '}Bâtiments, terrain et orthophoto © swisstopo (swissBUILDINGS3D, swissALTI3D, SWISSIMAGE).
+      </p>
+      <div className="renomize-steps">
+        {RENOMIZE_STEPS.map((s) => (
+          <div className="renomize-step" key={s.t}><h3>{s.t}</h3><p>{s.d}</p></div>
+        ))}
+      </div>
+      <a className="grid-cta" href={STUDY_URL} {...EXT}>
+        <div>
+          <div className="eyebrow">{CLIMACY.cta.eyebrow}</div>
+          <div className="disp gc-title">{CLIMACY.cta.title[0]} <span>{CLIMACY.cta.title[1]}</span></div>
+        </div>
+        <span className="gc-btn">{CTA_ROUTE.label}<Arrow /></span>
+      </a>
+    </section>
+  );
+}
+
 const PAGES = {
   'accueil': PageAccueil, 'tuile': PageTuile, 'interet': PageInteret, 'financement': PageFinancement, 'realisations': PageRealisations,
-  'pour-qui': PagePourQui, 'professionnels': PageProfessionnels, 'architectes': PageArchitectes, 'ppe': PagePPE, 'ressources': PageRessources, 'apropos': PageAPropos, 'contact': PageContact,
+  'pour-qui': PagePourQui, 'professionnels': PageProfessionnels, 'architectes': PageArchitectes, 'ppe': PagePPE, 'renomize': PageRenomize, 'ressources': PageRessources, 'apropos': PageAPropos, 'contact': PageContact,
 };
 
 function Site({ route, heroMedia }) {
