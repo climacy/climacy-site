@@ -54,6 +54,11 @@ const routes = [
     description: 'Comprenez le supplément solaire, les économies attendues et les options de coproduction pour votre toiture Climacy.',
   },
   {
+    path: '/renomize/',
+    title: 'Renomize · Rénovation énergétique en maquette 3D · Climacy',
+    description: 'Maquette 3D interactive d’une rénovation énergétique à La Tour-de-Peilz : toiture entièrement solaire, façade préfabriquée active et isolation périphérique.',
+  },
+  {
     path: '/ressources/',
     title: 'Questions fréquentes sur les tuiles solaires · Climacy',
     description: 'Réponses aux questions fréquentes sur l’intégration, la performance, l’entretien et le financement des tuiles solaires Climacy.',
