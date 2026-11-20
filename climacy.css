@@ -1711,3 +1711,20 @@
   .cin .comparison-caption h3 { min-height: 34px; font-size: 13px !important; line-height: 1.28; letter-spacing: .055em; }
   .cin .comparison-caption p { margin-top: 8px; font-size: 14px !important; line-height: 1.35 !important; }
 }
+
+/* Renomize : page projet avec maquette 3D */
+.renomize-figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 40px 0 28px; }
+.renomize-figure { border-top: 1px solid currentColor; padding-top: 14px; opacity: .92; line-height: 1.45; }
+.renomize-figure .disp { font-size: 34px; line-height: 1.1; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.renomize-model { position: relative; width: 100%; height: min(78vh, 760px); min-height: 460px; border-radius: 10px; overflow: hidden; background: #cfdbe4; }
+.renomize-model iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+.renomize-note { font-size: 14px; opacity: .8; margin: 12px 0 44px; }
+.renomize-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.renomize-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-bottom: 56px; }
+.renomize-step h3 { font-size: 20px; margin: 0 0 10px; }
+.renomize-step p { margin: 0; line-height: 1.55; opacity: .88; }
+@media (max-width: 899px) {
+  .renomize-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .renomize-steps { grid-template-columns: 1fr; }
+  .renomize-model { height: 70vh; min-height: 420px; }
+}
