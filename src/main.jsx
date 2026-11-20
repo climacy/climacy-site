@@ -14,6 +14,7 @@ const PATH_TO_ROUTE = {
   '/architectes/': 'architectes',
   '/ppe/': 'ppe',
   '/financement/': 'financement',
+  '/renomize/': 'renomize',
   '/ressources/': 'ressources',
   '/a-propos/': 'apropos',
   '/contact/': 'contact',
