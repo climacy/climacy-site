@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Rue de la Cure 1, Crissier · Maquette 3D · Climacy</title>
+<link rel="icon" type="image/svg+xml" href="/assets/Climacy_flavicon.svg" />
+<style>
+  html, body { margin: 0; height: 100%; background: #131311; color: #f1efe8;
+               font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #maquette { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+  #msg { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+         margin: 0; padding: 24px; text-align: center; font-size: 17px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<p id="msg">Chargement de la maquette 3D…</p>
+<script>
+  // La maquette est un fichier autonome, maquette-3d.html, déposé dans ce même dossier
+  // (public/cure/). Cette page l'affiche en plein écran sous l'adresse /cure/.
+  // Tant que le fichier n'est pas déposé, on affiche un message plutôt qu'une page d'erreur.
+  var FICHIER = 'maquette-3d.html';
+  var msg = document.getElementById('msg');
+
+  fetch(FICHIER, { method: 'HEAD', cache: 'no-store' })
+    .then(function (reponse) { return reponse.ok; }, function () { return true; })
+    .then(function (present) {
+      if (!present) {
+        msg.textContent = 'La maquette 3D de ce projet sera disponible ici prochainement.';
+        return;
+      }
+      var cadre = document.createElement('iframe');
+      cadre.id = 'maquette';
+      cadre.title = 'Maquette 3D, Rue de la Cure 1, Crissier';
+      cadre.allowFullscreen = true;
+      cadre.addEventListener('load', function () { msg.remove(); });
+      cadre.src = FICHIER;
+      document.body.appendChild(cadre);
+    });
+</script>
+<noscript><style>#msg { display: none; }</style><p style="text-align:center;padding:24px">Cette maquette 3D a besoin de JavaScript pour s'afficher.</p></noscript>
+</body>
+</html>
