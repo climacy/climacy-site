@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Le Landeron · Maquette 3D et carte CA / CEL · Climacy</title>
+<title>Le Landeron · Maquette 3D, carte CA / CEL et budget · Climacy</title>
 <link rel="icon" type="image/svg+xml" href="/assets/Climacy_flavicon.svg" />
 <style>
   html, body { margin: 0; height: 100%; background: #131311; color: #f1efe8;
@@ -15,6 +15,7 @@
   nav strong { margin-right: auto; font-size: 15px; font-weight: 600; }
   nav a { color: #f1efe8; text-decoration: none; font-size: 14px; padding: 6px 12px;
           border: 1px solid #4a4a43; border-radius: 6px; }
+  nav a[hidden] { display: none; }
   nav a[aria-current="page"] { background: #f1efe8; color: #131311; border-color: #f1efe8; }
   nav a:focus-visible { outline: 2px solid #f1efe8; outline-offset: 2px; }
   main { position: relative; flex: 1; min-height: 0; }
@@ -27,67 +28,66 @@
 <body>
 <nav aria-label="Vues du projet">
   <strong>Le Landeron</strong>
-  <a href="#maquette" data-vue="maquette">Maquette 3D</a>
-  <a href="#carte" data-vue="carte">Carte CA et CEL</a>
+  <a href="#maquette" data-vue="maquette" hidden>Maquette 3D</a>
+  <a href="#carte" data-vue="carte" hidden>Carte CA et CEL</a>
+  <a href="#budget" data-vue="budget" hidden>Budget</a>
 </nav>
 <main>
   <p id="msg">Chargement…</p>
 </main>
 <script>
-  // Deux fichiers autonomes sont déposés dans ce même dossier (public/landeron/) :
-  // maquette-3d.html (maquette 3D de la toiture) et carte.html (adresses CA et CEL).
-  // Cette page les affiche sous l'adresse /landeron/, avec #maquette ou #carte,
-  // sur le modèle de public/cure/.
-  // Tant qu'un fichier n'est pas déposé, on affiche un message plutôt qu'une page d'erreur.
+  // Des fichiers autonomes sont déposés dans ce même dossier (public/landeron/) :
+  // maquette-3d.html (maquette 3D de la toiture), carte.html (adresses CA et CEL)
+  // et budget.html (investissement et recettes par variante).
+  // Cette page les affiche sous l'adresse /landeron/, avec #maquette, #carte ou #budget,
+  // sur le modèle de public/cure/. Un onglet n'apparaît que si son fichier est déposé ;
+  // tant qu'aucun fichier ne l'est, on affiche un message plutôt qu'une page d'erreur.
   var VUES = {
-    maquette: {
-      fichier: 'maquette-3d.html',
-      titre: 'Maquette 3D de la toiture, Le Landeron',
-      attente: 'La maquette 3D de ce projet sera disponible ici prochainement.'
-    },
-    carte: {
-      fichier: 'carte.html',
-      titre: 'Carte des adresses CA et CEL, Le Landeron',
-      attente: 'La carte de ce projet sera disponible ici prochainement.'
-    }
+    maquette: { fichier: 'maquette-3d.html', titre: 'Maquette 3D de la toiture, Le Landeron' },
+    carte: { fichier: 'carte.html', titre: 'Carte des adresses CA et CEL, Le Landeron' },
+    budget: { fichier: 'budget.html', titre: 'Budget par variante, Le Landeron' }
   };
+  var ORDRE = ['maquette', 'carte', 'budget'];
   var zone = document.querySelector('main');
   var msg = document.getElementById('msg');
-  var numero = 0;
+  var liens = document.querySelectorAll('nav a');
 
   function afficher() {
+    var disponibles = ORDRE.filter(function (nom) { return VUES[nom].present; });
+    var ancien = document.getElementById('cadre');
+    if (ancien) ancien.remove();
+    if (!disponibles.length) {
+      msg.hidden = false;
+      msg.textContent = 'Les documents de ce projet seront disponibles ici prochainement.';
+      return;
+    }
     var nom = location.hash.replace('#', '');
-    if (!VUES[nom]) nom = 'maquette';
-    var vue = VUES[nom];
-    var appel = ++numero;
-
-    document.querySelectorAll('nav a').forEach(function (lien) {
+    if (disponibles.indexOf(nom) < 0) nom = disponibles[0];
+    liens.forEach(function (lien) {
       if (lien.dataset.vue === nom) lien.setAttribute('aria-current', 'page');
       else lien.removeAttribute('aria-current');
     });
-    var ancien = document.getElementById('cadre');
-    if (ancien) ancien.remove();
     msg.hidden = false;
     msg.textContent = 'Chargement…';
-
-    fetch(vue.fichier, { method: 'HEAD', cache: 'no-store' })
-      .then(function (reponse) { return reponse.ok; }, function () { return true; })
-      .then(function (present) {
-        if (appel !== numero) return;
-        if (!present) { msg.textContent = vue.attente; return; }
-        var cadre = document.createElement('iframe');
-        cadre.id = 'cadre';
-        cadre.title = vue.titre;
-        cadre.allowFullscreen = true;
-        cadre.addEventListener('load', function () { if (appel === numero) msg.hidden = true; });
-        cadre.src = vue.fichier;
-        zone.appendChild(cadre);
-      });
+    var cadre = document.createElement('iframe');
+    cadre.id = 'cadre';
+    cadre.title = VUES[nom].titre;
+    cadre.allowFullscreen = true;
+    cadre.addEventListener('load', function () { msg.hidden = true; });
+    cadre.src = VUES[nom].fichier;
+    zone.appendChild(cadre);
   }
 
-  window.addEventListener('hashchange', afficher);
-  afficher();
+  Promise.all(ORDRE.map(function (nom) {
+    return fetch(VUES[nom].fichier, { method: 'HEAD', cache: 'no-store' })
+      .then(function (reponse) { return reponse.ok; }, function () { return true; });
+  })).then(function (presences) {
+    ORDRE.forEach(function (nom, i) { VUES[nom].present = presences[i]; });
+    liens.forEach(function (lien) { lien.hidden = !VUES[lien.dataset.vue].present; });
+    window.addEventListener('hashchange', afficher);
+    afficher();
+  });
 </script>
-<noscript><style>#msg { display: none; }</style><p style="text-align:center;padding:24px">Cette page a besoin de JavaScript pour afficher la maquette 3D et la carte.</p></noscript>
+<noscript><style>#msg { display: none; }</style><p style="text-align:center;padding:24px">Cette page a besoin de JavaScript pour afficher la maquette 3D, la carte et le budget.</p></noscript>
 </body>
 </html>
