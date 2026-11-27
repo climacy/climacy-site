@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Budget par variante Le Landeron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one horizontal bar chart (investment split and 25-year revenue per variant), then the same figures as a table. */
+:root{
+  --surface-1:#ffffff; --page:#f4f5f3; --text-primary:#191919; --text-secondary:#666666; --grid:#e7e7e7; --axis:#c2c2c2;
+  --series-1:#257de0; --series-2:#f47230; --series-3:#00b894; --series-4:#f2a600;
+  --display:"Archivo Narrow","Arial Narrow",Arial,sans-serif; --body:"Archivo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;--surface-1:#191919;--page:#111111;--text-primary:#efefef;--text-secondary:#9c9c9c;--grid:#303030;--axis:#474747;
+    --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;--series-4:#d28e05;}
+}
+:root[data-theme="dark"]{color-scheme:dark;--surface-1:#191919;--page:#111111;--text-primary:#efefef;--text-secondary:#9c9c9c;--grid:#303030;--axis:#474747;
+  --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;--series-4:#d28e05;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page);color:var(--text-primary);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:1000px;margin:0 auto;padding:22px 16px 36px;display:grid;gap:18px}
+h1{font-family:var(--display);font-weight:700;font-size:27px;line-height:1.1;margin:0 0 4px;text-wrap:balance}
+.lede{margin:0;color:var(--text-secondary);max-width:68ch}
+.card{background:var(--surface-1);border-radius:8px;padding:18px 18px 14px;position:relative}
+h2{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 2px}
+.sub{color:var(--text-secondary);font-size:13.5px;margin:0 0 12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--text-secondary);margin:0 0 6px;padding:0;list-style:none}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--body);fill:var(--text-secondary);font-size:12.5px}
+svg text.cat{fill:var(--text-primary);font-weight:600;font-size:13.5px}
+svg text.val{fill:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums}
+.seg{cursor:default;outline:none}
+.seg:hover,.seg:focus-visible{filter:brightness(1.12)}
+#tip{position:absolute;display:none;pointer-events:none;background:var(--text-primary);color:var(--surface-1);border-radius:6px;padding:8px 10px;font-size:13px;line-height:1.35;max-width:260px;z-index:2;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+#tip b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+#tip span{display:block;opacity:.85}
+#tip i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{color:var(--text-secondary);font-weight:500;vertical-align:bottom;white-space:normal;min-width:96px}
+tr.key td{font-weight:700}
+ul.note{margin:0;padding-left:18px;color:var(--text-secondary);font-size:13px;display:grid;gap:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Le Landeron : investissement et recettes par variante</h1>
+    <p class="lede">Rénovation et isolation de la toiture, avec ou sans tuiles solaires. Montants en CHF TTC ; les recettes viennent de la revente du courant à 8 ct/kWh.</p>
+  </header>
+
+  <div class="card" id="chartcard">
+    <h2>Ce que coûte chaque variante, et ce que le solaire rapporte en 25 ans</h2>
+    <p class="sub">Première barre : l'investissement, réparti entre ce qui reste à charge, l'économie d'impôt et les subventions. Seconde barre : les recettes solaires cumulées sur 25 ans, entretien déduit.</p>
+    <ul class="legend" id="legend"></ul>
+    <svg id="chart" role="img" aria-label="Investissement et recettes solaires sur 25 ans pour les quatre variantes"></svg>
+    <div id="tip"></div>
+  </div>
+
+  <div class="card">
+    <h2>Les mêmes chiffres en tableau</h2>
+    <p class="sub">Le surcoût et le temps de retour se mesurent par rapport à la variante en tuiles.</p>
+    <div class="scroll"><table id="tbl"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Hypothèses</h2>
+    <ul class="note">
+      <li>Rénovation, isolation et pignons : offres Evasion Bois du 28.12.2025. Toiture solaire : prix extrapolés de la pré-étude Climacy, pas des offres fermes.</li>
+      <li>Subvention isolation de 60 CHF/m², rétribution unique Pronovo de 440 CHF/kWc (370 au-delà de 30 kW), déduction fiscale de 30 %.</li>
+      <li>Toute la nouvelle production est vendue à 8 ct/kWh : l'installation existante de 9,43 kWc couvre déjà l'autoconsommation.</li>
+      <li>Recettes sans actualisation ni évolution des tarifs, 100 CHF d'entretien par an.</li>
+    </ul>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+const D=[{"name": "Tuiles, sans solaire", "inv": 99623, "subs": 11940, "tax": 26305, "net": 61378, "kwc": 0, "prod": 0, "rev": 0, "rev25": 0, "pay": 0, "bal": 0, "extra": 0}, {"name": "Solaire sud", "inv": 124633, "subs": 15682, "tax": 32685, "net": 76266, "kwc": 8.5, "prod": 8692, "rev": 595, "rev25": 14884, "pay": 25.0, "bal": -3, "extra": 14887}, {"name": "Solaire sud + nord", "inv": 154154, "subs": 25176, "tax": 38694, "net": 90285, "kwc": 31.9, "prod": 26901, "rev": 2052, "rev25": 51302, "pay": 14.1, "bal": 22396, "extra": 28906}, {"name": "Solaire sud + nord + pignons", "inv": 162726, "subs": 27512, "tax": 40564, "net": 94650, "kwc": 38.2, "prod": 29872, "rev": 2290, "rev25": 57244, "pay": 14.5, "bal": 23972, "extra": 33272}];
+const NS='http://www.w3.org/2000/svg';
+const SER=[{k:'net',n:'Reste à charge',c:'var(--series-1)'},{k:'tax',n:"Économie d'impôt",c:'var(--series-2)'},{k:'subs',n:'Subventions',c:'var(--series-3)'},{k:'rev25',n:'Recettes solaires sur 25 ans',c:'var(--series-4)'}];
+const chf=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"’");
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+const lg=document.getElementById('legend');
+SER.forEach(s=>{const li=document.createElement('li'),i=document.createElement('i');i.style.background=s.c;li.appendChild(i);li.appendChild(document.createTextNode(s.n));lg.appendChild(li);});
+
+const svg=document.getElementById('chart'),card=document.getElementById('chartcard'),tip=document.getElementById('tip');
+const W=920,L=206,R=150,rowH=84,top=8,H=top+rowH*D.length+34,PW=W-L-R,bar=22,GAP=2;
+svg.setAttribute('viewBox','0 0 '+W+' '+H);
+const max=Math.max.apply(null,D.map(d=>d.inv)),ticks=[0,50000,100000,150000].concat(max>150000*1.12?[200000]:[]),xmax=Math.max(max*1.02,150000);
+const X=v=>L+PW*v/xmax;
+ticks.forEach(t=>{el('line',{x1:X(t),x2:X(t),y1:top,y2:top+rowH*D.length,stroke:t?'var(--grid)':'var(--axis)','stroke-width':1},svg);
+  const tx=el('text',{x:X(t),y:top+rowH*D.length+18,'text-anchor':'middle'},svg);tx.textContent=t?(t/1000)+'K':'0';});
+const ax=el('text',{x:L+PW,y:top+rowH*D.length+18,'text-anchor':'end'},svg);ax.textContent='CHF';
+function show(e,d,s,share){tip.textContent='';const b=document.createElement('b');b.textContent=chf(d[s.k])+' CHF';tip.appendChild(b);
+  const l=document.createElement('span'),i=document.createElement('i');i.style.background=s.c;l.appendChild(i);l.appendChild(document.createTextNode(s.n));tip.appendChild(l);
+  const v=document.createElement('span');v.textContent=d.name+(share?' · '+share:'');tip.appendChild(v);
+  tip.style.display='block';const r=card.getBoundingClientRect();let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
+  if(e.clientX===undefined||(!e.clientX&&!e.clientY)){const q=e.target.getBoundingClientRect();x=q.left-r.left+q.width/2;y=q.top-r.top+q.height+8;}
+  if(x+270>r.width)x=Math.max(4,x-290);tip.style.left=x+'px';tip.style.top=y+'px';}
+function hide(){tip.style.display='none';}
+function seg(x0,x1,y,d,s,share,roundEnd){const w=Math.max(0,x1-x0);if(w<=0)return;
+  const g=el('g',{class:'seg',tabindex:0,role:'img','aria-label':d.name+', '+s.n+' : '+chf(d[s.k])+' CHF'},svg);
+  if(roundEnd&&w>6)el('path',{d:'M'+x0+' '+y+'H'+(x1-4)+'a4 4 0 0 1 4 4V'+(y+bar-4)+'a4 4 0 0 1 -4 4H'+x0+'Z',fill:s.c},g);
+  else el('rect',{x:x0,y:y,width:w,height:bar,fill:s.c},g);
+  el('rect',{x:x0-1,y:y-4,width:w+2,height:bar+8,fill:'transparent'},g);
+  ['pointermove','pointerenter','focus'].forEach(ev=>g.addEventListener(ev,e=>show(e,d,s,share)));
+  ['pointerleave','blur'].forEach(ev=>g.addEventListener(ev,hide));}
+D.forEach((d,i)=>{const y0=top+i*rowH,y1=y0+12,y2=y1+bar+8;
+  const parts=d.name.length>20?[d.name.slice(0,d.name.lastIndexOf(' + ')),d.name.slice(d.name.lastIndexOf(' + ')+1)]:[d.name];
+  parts.forEach((p,j)=>{const t=el('text',{class:'cat',x:0,y:y1+15+j*16},svg);t.textContent=p;});
+  const pb=el('text',{x:0,y:y1+15+parts.length*16+1},svg);pb.textContent=d.kwc?(String(d.kwc).replace('.',',')+' kWc · retour en '+String(d.pay).replace('.',',')+' ans'):'Référence';
+  let x=X(0);
+  ['net','tax','subs'].forEach((k,j)=>{const s=SER[j],xe=X((j===0?0:(j===1?d.net:d.net+d.tax))+d[k]);
+    seg(x+(j?GAP:0),xe,y1,d,s,Math.round(100*d[k]/d.inv)+' % de l’investissement',j===2);x=xe;});
+  const v1=el('text',{class:'val',x:X(d.inv)+8,y:y1+15},svg);v1.textContent=chf(d.inv);
+  if(d.rev25>0){seg(X(0),X(d.rev25),y2,d,SER[3],chf(d.rev)+' CHF par an',true);
+    const v2=el('text',{class:'val',x:X(d.rev25)+8,y:y2+15},svg);v2.textContent=chf(d.rev25);}
+  else{const t=el('text',{x:X(0)+8,y:y2+15},svg);t.textContent='Pas de recette solaire';}
+  if(i)el('line',{x1:0,x2:W,y1:y0,y2:y0,stroke:'var(--grid)','stroke-width':1},svg);
+});
+
+const tb=document.getElementById('tbl');
+const ROWS=[['Puissance solaire nouvelle',d=>d.kwc?String(d.kwc).replace('.',',')+' kWc':'–'],['Investissement TTC',d=>chf(d.inv),1],['Subventions',d=>'−'+chf(d.subs)],["Économie d'impôt",d=>'−'+chf(d.tax)],
+ ['Reste à charge',d=>chf(d.net),1],['Surcoût du solaire',d=>d.extra?chf(d.extra):'–'],['Production nouvelle, kWh/an',d=>d.prod?chf(d.prod):'–'],['Recette nette par an',d=>d.rev?chf(d.rev):'–'],
+ ['Recettes sur 25 ans',d=>d.rev25?chf(d.rev25):'–',1],['Temps de retour du surcoût',d=>d.pay?String(d.pay).replace('.',',')+' ans':'–'],['Bilan du solaire sur 25 ans',d=>d.kwc?(d.bal<0?'−':'+')+chf(Math.abs(d.bal)):'–',1]];
+const th=tb.createTHead().insertRow();['CHF'].concat(D.map(d=>d.name)).forEach(t=>{const c=document.createElement('th');c.textContent=t;th.appendChild(c);});
+const body=tb.createTBody();ROWS.forEach(r=>{const tr=body.insertRow();if(r[2])tr.className='key';tr.insertCell().textContent=r[0];D.forEach(d=>{tr.insertCell().textContent=r[1](d);});});
+})();
+</script>
+</body>
+</html>
