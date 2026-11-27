@@ -8,22 +8,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout: one horizontal bar chart (per variant: investment net of subsidies, split into what stays payable and the tax saving, then 25-year revenue at three feed-in tariffs), then the same figures as a table. */
+/* Layout: one horizontal bar chart (per variant: investment net of subsidies, split into what stays payable and the tax saving, then what the project brings back over 25 years, heating saving plus solar revenue at three feed-in tariffs), then the same figures as a table. */
 :root{
   --surface-1:#ffffff; --page:#f4f5f3; --text-primary:#191919; --text-secondary:#666666; --grid:#e7e7e7; --axis:#c2c2c2;
-  --series-1:#257de0; --series-2:#f47230; --series-3:#00b894;
+  --series-1:#257de0; --series-2:#f47230; --series-3:#00b894; --series-4:#f2a600;
   --display:"Archivo Narrow","Arial Narrow",Arial,sans-serif; --body:"Archivo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){color-scheme:dark;--surface-1:#191919;--page:#111111;--text-primary:#efefef;--text-secondary:#9c9c9c;--grid:#303030;--axis:#474747;
-    --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;}
+    --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;--series-4:#d28e05;}
 }
 :root[data-theme="dark"]{color-scheme:dark;--surface-1:#191919;--page:#111111;--text-primary:#efefef;--text-secondary:#9c9c9c;--grid:#303030;--axis:#474747;
-  --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;}
+  --series-1:#338ced;--series-2:#e76624;--series-3:#00a888;--series-4:#d28e05;}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--page);color:var(--text-primary);font-family:var(--body);font-size:15px;line-height:1.45}
 .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 36px;display:grid;gap:18px}
+.wrap>*{min-width:0}
 h1{font-family:var(--display);font-weight:700;font-size:27px;line-height:1.1;margin:0 0 4px;text-wrap:balance}
 .lede{margin:0;color:var(--text-secondary);max-width:68ch}
 .card{background:var(--surface-1);border-radius:8px;padding:18px 18px 14px;position:relative}
@@ -31,7 +32,7 @@ h2{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 2px}
 .sub{color:var(--text-secondary);font-size:13.5px;margin:0 0 12px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--text-secondary);margin:0 0 6px;padding:0;list-style:none}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
-svg{display:block;width:100%;height:auto;overflow:visible}
+svg{display:block;width:100%;min-width:760px;height:auto;overflow:visible}
 svg text{font-family:var(--body);fill:var(--text-secondary);font-size:12.5px}
 svg text.cat{fill:var(--text-primary);font-weight:600;font-size:13.5px}
 svg text.val{fill:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums}
@@ -55,20 +56,20 @@ ul.note{margin:0;padding-left:18px;color:var(--text-secondary);font-size:13px;di
 <div class="wrap">
   <header>
     <h1>Le Landeron : investissement et recettes par variante</h1>
-    <p class="lede">Rénovation et isolation de la toiture, avec ou sans tuiles solaires. Montants en CHF TTC ; les recettes viennent de la revente du courant, selon trois scénarios de tarif moyen : 5, 8 et 10 ct/kWh.</p>
+    <p class="lede">Rénovation et isolation de la toiture, avec ou sans tuiles solaires. Montants en CHF TTC. L'isolation économise environ 4’000 kWh de chauffage par an ; les recettes solaires viennent de la revente du courant, selon trois scénarios de tarif moyen : 5, 8 et 10 ct/kWh.</p>
   </header>
 
   <div class="card" id="chartcard">
-    <h2>Investissement net de subventions, et ce que le solaire rapporte en 25 ans selon le tarif de reprise</h2>
-    <p class="sub">Barre du haut : l'investissement une fois les subventions déduites, réparti entre ce qui reste à charge et l'économie d'impôt. Barres du bas : les recettes solaires cumulées sur 25 ans, entretien déduit, pour un tarif de reprise moyen de 5, 8 et 10 ct/kWh.</p>
+    <h2>Investissement net de subventions, et ce que le projet rapporte en 25 ans selon le tarif de reprise</h2>
+    <p class="sub">Barre du haut : l'investissement une fois les subventions déduites, réparti entre ce qui reste à charge et l'économie d'impôt. Barres du bas : ce que le projet rapporte en 25 ans, soit l'économie de chauffage due à l'isolation, puis les recettes solaires, entretien déduit, pour un tarif de reprise moyen de 5, 8 et 10 ct/kWh.</p>
     <ul class="legend" id="legend"></ul>
-    <svg id="chart" role="img" aria-label="Investissement net de subventions et recettes solaires sur 25 ans à 5, 8 et 10 ct/kWh, pour les quatre variantes"></svg>
+    <div class="scroll"><svg id="chart" role="img" aria-label="Investissement net de subventions, économie de chauffage et recettes solaires sur 25 ans à 5, 8 et 10 ct/kWh, pour les quatre variantes"></svg></div>
     <div id="tip"></div>
   </div>
 
   <div class="card">
     <h2>Les mêmes chiffres en tableau</h2>
-    <p class="sub">Le surcoût et le temps de retour se mesurent par rapport à la variante en tuiles. Les recettes sont données pour les trois tarifs de reprise.</p>
+    <p class="sub">Le surcoût et le temps de retour du solaire se mesurent par rapport à la variante en tuiles. Le coût net sur 25 ans est le reste à charge, moins les recettes solaires et l'économie de chauffage.</p>
     <div class="scroll"><table id="tbl"></table></div>
   </div>
 
@@ -78,23 +79,24 @@ ul.note{margin:0;padding-left:18px;color:var(--text-secondary);font-size:13px;di
       <li>Rénovation, isolation et pignons : offres Evasion Bois du 28.12.2025. Toiture solaire : prix extrapolés de la pré-étude Climacy, pas des offres fermes.</li>
       <li>Les subventions viennent en diminution de l'investissement : isolation à 60 CHF/m², rétribution unique Pronovo à 440 CHF/kWc (370 au-delà de 30 kW). La déduction fiscale de 30 % porte sur l'investissement net.</li>
       <li>Toute la nouvelle production est vendue au tarif de reprise, pris en moyenne sur 25 ans : 5, 8 ou 10 ct/kWh selon le scénario. L'installation existante de 9,43 kWc couvre déjà l'autoconsommation.</li>
-      <li>Recettes sans actualisation ni évolution des tarifs, 100 CHF d'entretien par an.</li>
+      <li>L'isolation économise environ 4’000 kWh de chauffage par an, soit 400 CHF par an à 10 ct/kWh. L'économie est la même dans les quatre variantes : elle ne change pas le temps de retour du solaire.</li>
+      <li>Recettes et économies sans actualisation ni évolution des tarifs, 100 CHF d'entretien par an pour le solaire.</li>
     </ul>
   </div>
 </div>
 <script>
 (function(){
 "use strict";
-const D=[{"name": "Tuiles, sans solaire", "inv": 99623, "net1": 87683, "subs": 11940, "tax": 26305, "net": 61378, "kwc": 0, "prod": 0, "rev": 0, "rev25": 0, "pay": 0, "bal": 0, "extra": 0, "sc": []}, {"name": "Solaire sud", "inv": 124633, "net1": 108951, "subs": 15682, "tax": 32685, "net": 76266, "kwc": 8.5, "prod": 8692, "rev": 595, "rev25": 14884, "pay": 25.0, "bal": -3, "extra": 14887, "sc": [{"t": 5, "rev": 335, "rev25": 8365, "pay": 44.5, "bal": -6522}, {"t": 8, "rev": 595, "rev25": 14884, "pay": 25.0, "bal": -3}, {"t": 10, "rev": 769, "rev25": 19230, "pay": 19.4, "bal": 4343}]}, {"name": "Solaire sud + nord", "inv": 154154, "net1": 128978, "subs": 25176, "tax": 38694, "net": 90285, "kwc": 31.9, "prod": 26901, "rev": 2052, "rev25": 51302, "pay": 14.1, "bal": 22396, "extra": 28906, "sc": [{"t": 5, "rev": 1245, "rev25": 31127, "pay": 23.2, "bal": 2220}, {"t": 8, "rev": 2052, "rev25": 51302, "pay": 14.1, "bal": 22396}, {"t": 10, "rev": 2590, "rev25": 64753, "pay": 11.2, "bal": 35847}]}, {"name": "Solaire sud + nord + pignons", "inv": 162726, "net1": 135214, "subs": 27512, "tax": 40564, "net": 94650, "kwc": 38.2, "prod": 29872, "rev": 2290, "rev25": 57244, "pay": 14.5, "bal": 23972, "extra": 33272, "sc": [{"t": 5, "rev": 1394, "rev25": 34840, "pay": 23.9, "bal": 1568}, {"t": 8, "rev": 2290, "rev25": 57244, "pay": 14.5, "bal": 23972}, {"t": 10, "rev": 2887, "rev25": 72180, "pay": 11.5, "bal": 38908}]}];
+const D=[{"name": "Tuiles, sans solaire", "inv": 99623, "net1": 87683, "subs": 11940, "tax": 26305, "net": 61378, "kwc": 0, "prod": 0, "rev": 0, "rev25": 0, "pay": 0, "bal": 0, "extra": 0, "sc": [], "heat": 400, "heat25": 10000, "c25": [51378, 51378, 51378]}, {"name": "Solaire sud", "inv": 124633, "net1": 108951, "subs": 15682, "tax": 32685, "net": 76266, "kwc": 8.5, "prod": 8692, "rev": 595, "rev25": 14884, "pay": 25.0, "bal": -3, "extra": 14887, "sc": [{"t": 5, "rev": 335, "rev25": 8365, "pay": 44.5, "bal": -6522}, {"t": 8, "rev": 595, "rev25": 14884, "pay": 25.0, "bal": -3}, {"t": 10, "rev": 769, "rev25": 19230, "pay": 19.4, "bal": 4343}], "heat": 400, "heat25": 10000, "c25": [57901, 51382, 47036]}, {"name": "Solaire sud + nord", "inv": 154154, "net1": 128978, "subs": 25176, "tax": 38694, "net": 90285, "kwc": 31.9, "prod": 26901, "rev": 2052, "rev25": 51302, "pay": 14.1, "bal": 22396, "extra": 28906, "sc": [{"t": 5, "rev": 1245, "rev25": 31127, "pay": 23.2, "bal": 2220}, {"t": 8, "rev": 2052, "rev25": 51302, "pay": 14.1, "bal": 22396}, {"t": 10, "rev": 2590, "rev25": 64753, "pay": 11.2, "bal": 35847}], "heat": 400, "heat25": 10000, "c25": [49158, 28982, 15532]}, {"name": "Solaire sud + nord + pignons", "inv": 162726, "net1": 135214, "subs": 27512, "tax": 40564, "net": 94650, "kwc": 38.2, "prod": 29872, "rev": 2290, "rev25": 57244, "pay": 14.5, "bal": 23972, "extra": 33272, "sc": [{"t": 5, "rev": 1394, "rev25": 34840, "pay": 23.9, "bal": 1568}, {"t": 8, "rev": 2290, "rev25": 57244, "pay": 14.5, "bal": 23972}, {"t": 10, "rev": 2887, "rev25": 72180, "pay": 11.5, "bal": 38908}], "heat": 400, "heat25": 10000, "c25": [49810, 27406, 12470]}];
 const NS='http://www.w3.org/2000/svg';
 const SC=(D.find(d=>d.sc.length)||{sc:[]}).sc;
 const num=v=>String(v).replace('.',',');
 const TAR=SC.map(c=>num(c.t)),TARTXT=TAR.length>1?TAR.slice(0,-1).join(', ')+' et '+TAR[TAR.length-1]:TAR.join('');
-const SER=[{k:'net',n:'Reste à charge',c:'var(--series-1)'},{k:'tax',n:"Économie d'impôt",c:'var(--series-2)'},{k:'rev',n:'Recettes solaires sur 25 ans, à '+TARTXT+' ct/kWh',c:'var(--series-3)'}];
+const SER=[{k:'net',n:'Reste à charge',c:'var(--series-1)'},{k:'tax',n:"Économie d'impôt",c:'var(--series-2)'},{k:'rev',n:'Recettes solaires sur 25 ans, à '+TARTXT+' ct/kWh',c:'var(--series-3)'},{k:'heat',n:'Économie de chauffage sur 25 ans',c:'var(--series-4)'}];
 const chf=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"’");
 function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
 const lg=document.getElementById('legend');
-SER.forEach(s=>{const li=document.createElement('li'),i=document.createElement('i');i.style.background=s.c;li.appendChild(i);li.appendChild(document.createTextNode(s.n));lg.appendChild(li);});
+[0,1,3,2].forEach(k=>{const s=SER[k],li=document.createElement('li'),i=document.createElement('i');i.style.background=s.c;li.appendChild(i);li.appendChild(document.createTextNode(s.n));lg.appendChild(li);});
 
 const svg=document.getElementById('chart'),card=document.getElementById('chartcard'),tip=document.getElementById('tip');
 const W=920,L=226,R=248,bar=22,sbar=14,GAP=2,rowH=12+bar+8+Math.max(1,SC.length)*(sbar+GAP)-GAP+12,top=8,H=top+rowH*D.length+34,PW=W-L-R;
@@ -127,23 +129,28 @@ D.forEach((d,i)=>{const y0=top+i*rowH,y1=y0+12,y2=y1+bar+8;
     seg(x+(j?GAP:0),xe,y1,bar,s,d[k],s.n,[d.name,Math.round(100*d[k]/d.net1)+' % de l’investissement net'],j===1);x=xe;});
   const v1=el('text',{class:'val',x:X(d.net1)+8,y:y1+15},svg);v1.textContent=chf(d.net1);
   const v1b=el('tspan',{'font-weight':400,fill:'var(--text-secondary)'},v1);v1b.textContent='  après '+chf(d.subs)+' de subventions';
+  const hx=X(d.heat25);
   if(d.sc.length)d.sc.forEach((c,j)=>{const y=y2+j*(sbar+GAP);
     const tl=el('text',{x:X(0)-7,y:y+11,'text-anchor':'end'},svg);tl.textContent=num(c.t)+' ct';
-    seg(X(0),X(c.rev25),y,sbar,SER[2],c.rev25,'Recettes sur 25 ans à '+num(c.t)+' ct/kWh',[d.name,chf(c.rev)+' CHF par an · retour en '+num(c.pay)+' ans'],true);
-    const v2=el('text',{class:'val',x:X(Math.max(0,c.rev25))+8,y:y+11},svg);v2.textContent=chf(c.rev25);
-    const v2b=el('tspan',{'font-weight':400,fill:'var(--text-secondary)'},v2);v2b.textContent='  retour en '+num(c.pay)+' ans';});
-  else{const t=el('text',{x:X(0)+8,y:y2+11},svg);t.textContent='Pas de recette solaire';}
+    seg(X(0),hx,y,sbar,SER[3],d.heat25,SER[3].n,[d.name,chf(d.heat)+' CHF par an, quel que soit le tarif'],c.rev25<=0);
+    seg(hx+GAP,X(d.heat25+c.rev25),y,sbar,SER[2],c.rev25,'Recettes solaires sur 25 ans à '+num(c.t)+' ct/kWh',[d.name,chf(c.rev)+' CHF par an · retour du solaire en '+num(c.pay)+' ans'],true);
+    const v2=el('text',{class:'val',x:X(d.heat25+Math.max(0,c.rev25))+8,y:y+11},svg);v2.textContent=chf(d.heat25+c.rev25);
+    const v2b=el('tspan',{'font-weight':400,fill:'var(--text-secondary)'},v2);v2b.textContent='  retour du solaire en '+num(c.pay)+' ans';});
+  else{seg(X(0),hx,y2,sbar,SER[3],d.heat25,SER[3].n,[d.name,chf(d.heat)+' CHF par an'],true);
+    const t=el('text',{class:'val',x:hx+8,y:y2+11},svg);t.textContent=chf(d.heat25);
+    const t2=el('tspan',{'font-weight':400,fill:'var(--text-secondary)'},t);t2.textContent='  chauffage seulement, pas de recette solaire';}
   if(i)el('line',{x1:0,x2:W,y1:y0,y2:y0,stroke:'var(--grid)','stroke-width':1},svg);
 });
 
 const tb=document.getElementById('tbl');
 const ROWS=[['Puissance solaire nouvelle',d=>d.kwc?num(d.kwc)+' kWc':'–'],['Investissement brut TTC',d=>chf(d.inv)],['Subventions',d=>'−'+chf(d.subs)],['Investissement net de subventions',d=>chf(d.net1),1],["Économie d'impôt",d=>'−'+chf(d.tax)],
- ['Reste à charge',d=>chf(d.net),1],['Surcoût du solaire',d=>d.extra?chf(d.extra):'–'],['Production nouvelle, kWh/an',d=>d.prod?chf(d.prod):'–']];
-const SCROWS=[['Recette nette par an',c=>chf(c.rev)],['Recettes sur 25 ans',c=>chf(c.rev25)],['Temps de retour du surcoût',c=>num(c.pay)+' ans'],['Bilan du solaire sur 25 ans',c=>(c.bal<0?'−':'+')+chf(Math.abs(c.bal)),1]];
+ ['Reste à charge',d=>chf(d.net),1],['Surcoût du solaire',d=>d.extra?chf(d.extra):'–'],['Production nouvelle, kWh/an',d=>d.prod?chf(d.prod):'–'],['Économie de chauffage par an',d=>chf(d.heat)]];
+const SCROWS=[['Recette solaire nette par an',c=>chf(c.rev)],['Recettes solaires sur 25 ans',c=>chf(c.rev25)],['Temps de retour du surcoût solaire',c=>num(c.pay)+' ans'],['Bilan du solaire sur 25 ans',c=>(c.bal<0?'−':'+')+chf(Math.abs(c.bal))]];
 const th=tb.createTHead().insertRow();['CHF'].concat(D.map(d=>d.name)).forEach(t=>{const c=document.createElement('th');c.textContent=t;th.appendChild(c);});
 const body=tb.createTBody();ROWS.forEach(r=>{const tr=body.insertRow();if(r[2])tr.className='key';tr.insertCell().textContent=r[0];D.forEach(d=>{tr.insertCell().textContent=r[1](d);});});
 SC.forEach((sc,j)=>{const g=body.insertRow();g.className='grp';const h=document.createElement('th');h.colSpan=D.length+1;h.scope='colgroup';h.textContent='Tarif de reprise moyen de '+num(sc.t)+' ct/kWh';g.appendChild(h);
-  SCROWS.forEach(r=>{const tr=body.insertRow();if(r[2])tr.className='key';tr.insertCell().textContent=r[0];D.forEach(d=>{tr.insertCell().textContent=d.sc[j]?r[1](d.sc[j]):'–';});});});
+  SCROWS.forEach(r=>{const tr=body.insertRow();if(r[2])tr.className='key';tr.insertCell().textContent=r[0];D.forEach(d=>{tr.insertCell().textContent=d.sc[j]?r[1](d.sc[j]):'–';});});
+  const tr=body.insertRow();tr.className='key';tr.insertCell().textContent='Coût net sur 25 ans, chauffage compris';D.forEach(d=>{tr.insertCell().textContent=chf(d.c25[j]);});});
 })();
 </script>
 </body>
