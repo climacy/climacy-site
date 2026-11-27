@@ -42,10 +42,12 @@
   // Cette page les affiche sous l'adresse /landeron/, avec #maquette, #carte ou #budget,
   // sur le modèle de public/cure/. Un onglet n'apparaît que si son fichier est déposé ;
   // tant qu'aucun fichier ne l'est, on affiche un message plutôt qu'une page d'erreur.
+  // Pour la maquette, le nom attendu est maquette-3d.html ; maquette-3dl.html est accepté
+  // en second choix, parce que le fichier a été déposé sous ce nom.
   var VUES = {
-    maquette: { fichier: 'maquette-3d.html', titre: 'Maquette 3D de la toiture, Le Landeron' },
-    carte: { fichier: 'carte.html', titre: 'Carte des adresses CA et CEL, Le Landeron' },
-    budget: { fichier: 'budget.html', titre: 'Budget par variante, Le Landeron' }
+    maquette: { fichiers: ['maquette-3d.html', 'maquette-3dl.html'], titre: 'Maquette 3D de la toiture, Le Landeron' },
+    carte: { fichiers: ['carte.html'], titre: 'Carte des adresses CA et CEL, Le Landeron' },
+    budget: { fichiers: ['budget.html'], titre: 'Budget par variante, Le Landeron' }
   };
   var ORDRE = ['maquette', 'carte', 'budget'];
   var zone = document.querySelector('main');
@@ -78,11 +80,19 @@
     zone.appendChild(cadre);
   }
 
-  Promise.all(ORDRE.map(function (nom) {
-    return fetch(VUES[nom].fichier, { method: 'HEAD', cache: 'no-store' })
-      .then(function (reponse) { return reponse.ok; }, function () { return true; });
-  })).then(function (presences) {
-    ORDRE.forEach(function (nom, i) { VUES[nom].present = presences[i]; });
+  // Renvoie le premier fichier de la liste qui est déposé, ou null.
+  function premierDepose(fichiers) {
+    return fichiers.reduce(function (suite, fichier) {
+      return suite.then(function (trouve) {
+        if (trouve) return trouve;
+        return fetch(fichier, { method: 'HEAD', cache: 'no-store' })
+          .then(function (reponse) { return reponse.ok ? fichier : null; }, function () { return fichier; });
+      });
+    }, Promise.resolve(null));
+  }
+
+  Promise.all(ORDRE.map(function (nom) { return premierDepose(VUES[nom].fichiers); })).then(function (trouves) {
+    ORDRE.forEach(function (nom, i) { VUES[nom].fichier = trouves[i]; VUES[nom].present = !!trouves[i]; });
     liens.forEach(function (lien) { lien.hidden = !VUES[lien.dataset.vue].present; });
     window.addEventListener('hashchange', afficher);
     afficher();
