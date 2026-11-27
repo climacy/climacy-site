@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Le Landeron · Maquette 3D et carte CA / CEL · Climacy</title>
+<link rel="icon" type="image/svg+xml" href="/assets/Climacy_flavicon.svg" />
+<style>
+  html, body { margin: 0; height: 100%; background: #131311; color: #f1efe8;
+               font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: flex; flex-direction: column; }
+  nav { flex: none; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 8px 12px; background: #1c1c19; border-bottom: 1px solid #33332e; }
+  nav strong { margin-right: auto; font-size: 15px; font-weight: 600; }
+  nav a { color: #f1efe8; text-decoration: none; font-size: 14px; padding: 6px 12px;
+          border: 1px solid #4a4a43; border-radius: 6px; }
+  nav a[aria-current="page"] { background: #f1efe8; color: #131311; border-color: #f1efe8; }
+  nav a:focus-visible { outline: 2px solid #f1efe8; outline-offset: 2px; }
+  main { position: relative; flex: 1; min-height: 0; }
+  #cadre { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  #msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+         margin: 0; padding: 24px; text-align: center; font-size: 17px; line-height: 1.5; }
+  #msg[hidden] { display: none; }
+</style>
+</head>
+<body>
+<nav aria-label="Vues du projet">
+  <strong>Le Landeron</strong>
+  <a href="#maquette" data-vue="maquette">Maquette 3D</a>
+  <a href="#carte" data-vue="carte">Carte CA et CEL</a>
+</nav>
+<main>
+  <p id="msg">Chargement…</p>
+</main>
+<script>
+  // Deux fichiers autonomes sont déposés dans ce même dossier (public/landeron/) :
+  // maquette-3d.html (maquette 3D de la toiture) et carte.html (adresses CA et CEL).
+  // Cette page les affiche sous l'adresse /landeron/, avec #maquette ou #carte,
+  // sur le modèle de public/cure/.
+  // Tant qu'un fichier n'est pas déposé, on affiche un message plutôt qu'une page d'erreur.
+  var VUES = {
+    maquette: {
+      fichier: 'maquette-3d.html',
+      titre: 'Maquette 3D de la toiture, Le Landeron',
+      attente: 'La maquette 3D de ce projet sera disponible ici prochainement.'
+    },
+    carte: {
+      fichier: 'carte.html',
+      titre: 'Carte des adresses CA et CEL, Le Landeron',
+      attente: 'La carte de ce projet sera disponible ici prochainement.'
+    }
+  };
+  var zone = document.querySelector('main');
+  var msg = document.getElementById('msg');
+  var numero = 0;
+
+  function afficher() {
+    var nom = location.hash.replace('#', '');
+    if (!VUES[nom]) nom = 'maquette';
+    var vue = VUES[nom];
+    var appel = ++numero;
+
+    document.querySelectorAll('nav a').forEach(function (lien) {
+      if (lien.dataset.vue === nom) lien.setAttribute('aria-current', 'page');
+      else lien.removeAttribute('aria-current');
+    });
+    var ancien = document.getElementById('cadre');
+    if (ancien) ancien.remove();
+    msg.hidden = false;
+    msg.textContent = 'Chargement…';
+
+    fetch(vue.fichier, { method: 'HEAD', cache: 'no-store' })
+      .then(function (reponse) { return reponse.ok; }, function () { return true; })
+      .then(function (present) {
+        if (appel !== numero) return;
+        if (!present) { msg.textContent = vue.attente; return; }
+        var cadre = document.createElement('iframe');
+        cadre.id = 'cadre';
+        cadre.title = vue.titre;
+        cadre.allowFullscreen = true;
+        cadre.addEventListener('load', function () { if (appel === numero) msg.hidden = true; });
+        cadre.src = vue.fichier;
+        zone.appendChild(cadre);
+      });
+  }
+
+  window.addEventListener('hashchange', afficher);
+  afficher();
+</script>
+<noscript><style>#msg { display: none; }</style><p style="text-align:center;padding:24px">Cette page a besoin de JavaScript pour afficher la maquette 3D et la carte.</p></noscript>
+</body>
+</html>
